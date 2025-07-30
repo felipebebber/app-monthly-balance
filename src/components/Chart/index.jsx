@@ -1,7 +1,6 @@
 function Chart() {
   return (
-    <div className="font-bold">
-      Chart
+    <div>
     </div>
   )
 };

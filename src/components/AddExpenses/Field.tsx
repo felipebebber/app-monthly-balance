@@ -1,33 +1,35 @@
-import { JSX, useState } from "react"
+import { JSX, useEffect, useState } from "react"
 
 type Input = {
     label: string,
     name: string,
     required?: boolean,
     type?: string,
-    value?: string
-}
-
-type Select = {
-    label: string,
-    name: string,
-    required?: boolean,
-    children: JSX.Element | JSX.Element[]
+    value?: string,
+    resetForm?: boolean,
+    setResetForm: (boolean) => void
 }
 
 const Field = {
-    styling: function(otherClasses = '') {
-        return `px-2 py-1.5 border border-gray-400 block min-w-0 rounded-md bg-blue-50 ${otherClasses}`;
+    styles: function(otherClasses = '') {
+        return `px-2 py-1.5 block min-w-0 rounded-md bg-blue-50 ${otherClasses}`;
     },
     Input: function(props: Input) {
         return (
             <Field.Label label={props.label}>
-                <input {...props} className={Field.styling('flex-1')} />
+                <input {...props} className={Field.styles('flex-1')} />
             </Field.Label>
         )
     },
     InputValor: function(props: Input) {
         const [amount, setAmount] = useState('');
+
+        useEffect(() => {
+            if (props.resetForm) {
+                props.setResetForm(false);
+                setAmount('');
+            }
+        }, [props.resetForm])
 
         const handleChange = (e) => {
             const raw = e.target.value.replace(/\D/g, '');
@@ -43,14 +45,14 @@ const Field = {
         
         return (
             <Field.Label label={props.label}>
-                <input {...props} className={Field.styling('flex-1')} value={formattedAmount} onChange={handleChange} />
+                <input name={props.name} type={props.type} required={props.required} className={Field.styles('flex-1')} value={formattedAmount} onChange={handleChange} />
             </Field.Label>
         )
     },
-    Select: function(props: Select, children: JSX.Element[]) {
+    Select: function(props) {
         return (
             <Field.Label label={props.label}>
-                <select defaultValue={''} className={Field.styling('flex-1')} {...props}>
+                <select defaultValue={''} className={Field.styles('flex-1')} {...props}>
                     <option value="" disabled>Selecione</option>
                     {props.children}
                 </select>
@@ -58,7 +60,7 @@ const Field = {
         )
     },
     Submit: function({ label }) {
-        return <button className={Field.styling()}>{label}</button>
+        return <button className={Field.styles()}>{label}</button>
     },
     Label: function({ label = '', children }) {
         return (

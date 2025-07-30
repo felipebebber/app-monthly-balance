@@ -1,20 +1,25 @@
 import List from "./List";
-import Block from "../Block";
+import CalculateExpensesFn from "../../utility/calculateExpense";
 
-function Balance() {
+function Balance({ list }) {
+  const total = CalculateExpensesFn(list);
+  
   return (
-    <div className="flex flex-col gap-3 h-full">
-      <p className="font-bold flex">
-        Balanço
-      </p>
-      <Block className="flex-1 overflow-auto px-0 py-0">
-        <List />
-      </Block>
-      <p className="font-bold flex justify-between">
-        <span>Gasto Total</span>
-        <span>Total</span>
-      </p>
-    </div>
+    <>
+      <div className="flex-1 overflow-auto px-0 py-0">
+        <List list={list} />
+      </div>
+      <BalanceTotal total={total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})} />
+    </>
+  )
+};
+
+function BalanceTotal({ total }) {
+  return (
+    <p className="flex justify-between bg-gray-200 text-black py-2 px-4">
+      <span>Gasto Total</span>
+      <span className="font-bold text-blue-600">{total}</span>
+    </p>
   )
 };
 

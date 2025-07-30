@@ -1,28 +1,43 @@
-import { useForm } from "react-hook-form"
-import { useContext } from "react";
+import { useContext, useState, useRef } from "react";
 import Field from "./Field";
 import NewExpenseContext from "../../hooks/NewExpenseContext";
-import monthNames from "../../utility/months";
+import monthNames from "../../data/months";
+import typeExpenses from "../../data/typeExpense";
 
 function Form() {
-  const changeExpenseList = useContext(NewExpenseContext);
+  const newExpenseFn = useContext(NewExpenseContext);
+  // const inputValorRef = useRef(null);
+  const [resetForm, setResetForm] = useState(false);
+  const [valorError, setValorError] = useState(false);
   
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm()
+  const handleSubmit = (e) => {
+    const formData = new FormData(e.currentTarget);
+    e.preventDefault();
 
-  const onSubmit = (data) => {
-    const date = new Date(data.data);
+    let objExpense = {};
+    
+    
+    for (let [key, value] of formData.entries()) {
+      objExpense[key] = value;
+      if (value === "R$ 0,00") {
+        setValorError(true);
+        return false;
+      }
+    }
+    
+    const date = new Date(objExpense.data);
     const month = date.getMonth();
     const year = date.getFullYear();
-    data.month = month;
-    data.monthName = monthNames[month];
-    data.year = year;
+    objExpense.month = month;
+    objExpense.monthName = monthNames[month];
+    objExpense.year = year;
 
-    changeExpenseList(data);
+    if (valorError) {
+      setValorError(false);
+    }
+    setResetForm(true);
+    newExpenseFn(objExpense);
+    e.currentTarget.reset()
   };
 
   const currentDate = (function() {
@@ -32,41 +47,35 @@ function Form() {
     return now.getFullYear() + "-" + (month) + "-"+ (day);
   })();
 
-  const refErrorsFields = {
-    required: "Campo obrigatório!",
-  }
-
-  const refErrosClasses = "absolute bg-red-500 text-white px-2 py-1 top-[104%] right-0 text-[10px]";
-
   return (
-   <form className="text-sm flex gap-4" onSubmit={handleSubmit(onSubmit)}>
+   <form className="text-sm flex gap-4" onSubmit={handleSubmit}>
         <div className="flex-1 min-w-0 relative">
-          <Field.Select name="tipo" label='Tipo' {...register("tipo", { required: refErrorsFields['required'] })}>
-            <option value="Comida">Comida</option>
-            <option value="Saúde">Saúde</option>
-            <option value="Diversão">Diversão</option>
-            <option value="Casa">Casa</option>
+          <Field.Select name="tipo" label='Tipo' required={true}>
+            {typeExpenses.map(function(item) {
+              return (
+                <option key={item.id} value={item.id}>{item.value}</option>
+              )
+            })}
           </Field.Select>
-          {errors.tipo && <span className={refErrosClasses}>{errors.tipo.message}</span>}
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.Input name="descricao" label="Descrição" {...register("descricao")} />
+          <Field.Input name="descricao" type="text" label="Descrição" />
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.InputValor name="valor" label="Valor" {...register("valor", { required: refErrorsFields['required'], validate: (val) => {
-            if (val == 'R$ 0,00') {
-              return 'Valor precisa ser acima de 0.';
-            }
-            return true;
-          } })} />
-          {errors.valor && <span className={refErrosClasses}>{errors.valor.message}</span>}
+          <Field.InputValor setResetForm={setResetForm} resetForm={resetForm} name="valor" type="text" label="Valor" required={true} />
+          {valorError && <ErrorMsg>Valor precisar ser maior que 0</ErrorMsg>}
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.Input name="data" label="Data" {...register("data", { required: refErrorsFields['required'] })} type="date" defaultValue={currentDate} />
-          {errors.data && <span className={refErrosClasses}>{errors.data.message}</span>}
+          <Field.Input name="data" label="Data" required={true} type="date" defaultValue={currentDate} />
         </div>
-        <Field.Submit label="Adicionar" {...register("Adicionar")} />
+        <Field.Submit label="Adicionar" />
     </form>
+  )
+};
+
+function ErrorMsg({ children }) {
+  return (
+    <span className={'absolute bg-red-500 text-white px-2 py-1 top-[104%] right-0 text-[10px]'}>{children}</span>
   )
 };
 
