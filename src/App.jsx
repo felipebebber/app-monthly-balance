@@ -1,11 +1,15 @@
-import AddExpenses from './components/AddExpenses';
+import { useEffect, useState } from 'react';
+import Expenses from './components/Expenses';
 import Chart from './components/Chart';
 import Balance from './components/Balance';
 import Block from './components/Block';
-import { useEffect, useState } from 'react';
 import NewExpenseContext from './hooks/NewExpenseContext';
+import Modal from './components/Modal';
+import FormEdit from './components/Expenses/Form';
+
 import newExpense from './controller/newExpense';
 import removeExpense from './controller/removeExpense';
+import editExpense from './controller/editExpense';
 
 function App() {
   const date = new Date();
@@ -14,6 +18,8 @@ function App() {
   const [currentMonth, setCurrentMonth] = useState(date.getMonth());
   const [currentYear, setCurrentYear] = useState(date.getFullYear());
   const [currentList, setCurrentList] = useState([]);
+  const [modalConfig, setModalConfig] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     try {
@@ -55,11 +61,24 @@ function App() {
     setExpenseList({...newList});
   }
   
-  const removeExpenseFn = function(month, year, id) {
+  const removeExpenseFn = function({month, year, id}) {
     if (window.confirm("Deseja deletar essa dispesa?")) {
       const newList = removeExpense(expenseList, month, year, id);
       setExpenseList({...newList});
     }
+  }
+  
+  const editExpenseFn = function(id, expense) {
+    const editExpenseFnRef = function(editedExpense) {
+      const newList = editExpense(expenseList, editedExpense, id);
+      setExpenseList({...newList});
+      setModalVisible(false);
+    }
+    setModalConfig({
+      title: `Edição de Despesa [${id}]`,
+      html: <FormEdit type="full" fn={editExpenseFnRef} values={expense} key={`${expense.month}${expense.year}${id}`} />
+    });
+    setModalVisible(true)
   }
 
   const resetExpenseList = function() {
@@ -76,6 +95,7 @@ function App() {
   }
 
   return (
+    <>
     <div className="bg-gray-50 text-gray-800 h-lvh flex gap-4">
       <div className="grid gap-4 m-auto w-[800px] shadow-sm p-4 rounded-md grid-cols-1 bg-white">
         <div className='text-center'>
@@ -86,19 +106,19 @@ function App() {
         <div className='flex flex-col gap-4'>
           <div className="w-full max-w-[800px] mx-auto">
             <NewExpenseContext.Provider value={newExpenseFn}>
-              <AddExpenses />
+              <Expenses />
             </NewExpenseContext.Provider>
           </div>
 
           <div className='flex gap-4 m-auto w-full h-[400px]'>
             <div className="flex-4/12">
-              <Block title="Chart" className="h-full px-0 py-0 overflow-hidden">
+              <Block title="Chart" className="h-full">
                 <Chart />
               </Block>
             </div>
             <div className="flex-8/12">
-              <Block title="Balanço" className="h-full px-0 py-0 overflow-hidden">
-                  <NewExpenseContext.Provider value={removeExpenseFn}>
+              <Block title="Balanço" className="h-full">
+                  <NewExpenseContext.Provider value={{editExpenseFn, removeExpenseFn}}>
                     <Balance list={currentList} />
                   </NewExpenseContext.Provider>
               </Block>
@@ -110,6 +130,8 @@ function App() {
         </div>
         </div>
     </div>
+    <Modal modalConfig={modalConfig} setModalVisible={setModalVisible} modalVisible={modalVisible} />
+    </>
   )
 };
 
@@ -133,5 +155,6 @@ function DateControlBtn({ children }) {
     <button className='px-2 py-1 uppercase text-xs bg-gray-200'>{children}</button>
   )
 };
+
 
 export default App;

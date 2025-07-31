@@ -4,7 +4,6 @@ import EditIcon from '../../assets/icons/edit.svg?react';
 import DeleteIcon from '../../assets/icons/delete.svg?react';
 import formatData from "../../utility/formatData";
 
-
 function List({ list = false }) {
   return (
     <table className="w-full text-left text-sm">
@@ -30,14 +29,14 @@ function Thead({ items }) {
 
 function Tbody({ list }) {
   const classNameTd = "px-2 pb-2";
-  const removeExpenseFn = useContext(NewExpenseContext);
+  const { removeExpenseFn, editExpenseFn } = useContext(NewExpenseContext);
 
   return (
     <tbody className="border-t-8 border-b-8 border-transparent text-sm">
         {list.map(function(item, i) {
-          console.log(item);
+          // console.log(item);
             const { descricao, tipo, valor, data, month, year } = item;
-
+            const infoUpdateExpense = { month, year, id: i };
             return (
                 <tr key={i}>
                     <td className={`${classNameTd} first:pl-4`}>{tipo}</td>
@@ -50,8 +49,8 @@ function Tbody({ list }) {
                     <td className={`${classNameTd}`}>{formatData(data)}</td>
                     <td className={`${classNameTd}`}>
                       <div className="flex gap-2">
-                        <button className="p-1 text-gray-400 cursor-pointer"><EditIcon /></button>
-                        <button className="p-1 text-gray-400 cursor-pointer" onClick={() => removeExpenseFn(month, year, i)}><DeleteIcon /></button>
+                        <button className="p-1 text-gray-400 cursor-pointer" onClick={() => editExpenseFn(i, item)}><EditIcon /></button>
+                        <button className="p-1 text-gray-400 cursor-pointer" onClick={() => removeExpenseFn(infoUpdateExpense)}><DeleteIcon /></button>
                       </div>
                     </td>
                 </tr>

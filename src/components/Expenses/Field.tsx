@@ -7,6 +7,7 @@ type Input = {
     type?: string,
     value?: string,
     resetForm?: boolean,
+    newValue?: string,
     setResetForm: (boolean) => void
 }
 
@@ -22,14 +23,22 @@ const Field = {
         )
     },
     InputValor: function(props: Input) {
-        const [amount, setAmount] = useState('');
+        const [amount, setAmount] = useState(props.newValue ? props.newValue.replace(/\D/g, '') : '');
+
+        // console.log(amount);
+        // console.log(props.newValue);
 
         useEffect(() => {
             if (props.resetForm) {
                 props.setResetForm(false);
                 setAmount('');
             }
-        }, [props.resetForm])
+        }, [props.resetForm]);
+
+
+        useEffect(() => {
+
+        }, []);
 
         const handleChange = (e) => {
             const raw = e.target.value.replace(/\D/g, '');
@@ -41,7 +50,9 @@ const Field = {
             currency: 'BRL',
         })
         .format(Number(amount) / 100 || 0)
-        .replace('\u00A0', ' ');;
+        .replace('\u00A0', ' ');
+
+        // console.log(formattedAmount);
         
         return (
             <Field.Label label={props.label}>

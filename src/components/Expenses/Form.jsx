@@ -1,10 +1,10 @@
-import { useContext, useState, useRef } from "react";
+import { useContext, useState } from "react";
 import Field from "./Field";
 import NewExpenseContext from "../../hooks/NewExpenseContext";
 import monthNames from "../../data/months";
 import typeExpenses from "../../data/typeExpense";
 
-function Form() {
+function Form({ type = 'row', fn = 'add', values = {} }) {
   const newExpenseFn = useContext(NewExpenseContext);
   // const inputValorRef = useRef(null);
   const [resetForm, setResetForm] = useState(false);
@@ -35,9 +35,14 @@ function Form() {
     if (valorError) {
       setValorError(false);
     }
-    setResetForm(true);
-    newExpenseFn(objExpense);
-    e.currentTarget.reset()
+    if (fn === 'add') {
+      newExpenseFn(objExpense);
+      setResetForm(true);
+      e.currentTarget.reset();
+      
+    } else {
+      fn(objExpense);
+    }
   };
 
   const currentDate = (function() {
@@ -48,9 +53,9 @@ function Form() {
   })();
 
   return (
-   <form className="text-sm flex gap-4" onSubmit={handleSubmit}>
+   <form className={`text-sm flex gap-4 ${type == 'full' ? 'flex-col' : ''}`} onSubmit={handleSubmit}>
         <div className="flex-1 min-w-0 relative">
-          <Field.Select name="tipo" label='Tipo' required={true}>
+          <Field.Select name="tipo" label='Tipo' required={true} defaultValue={values.tipo ? values.tipo : ''}>
             {typeExpenses.map(function(item) {
               return (
                 <option key={item.id} value={item.id}>{item.value}</option>
@@ -59,16 +64,16 @@ function Form() {
           </Field.Select>
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.Input name="descricao" type="text" label="Descrição" />
+          <Field.Input name="descricao" type="text" label="Descrição" defaultValue={values.descricao ? values.descricao : ''} />
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.InputValor setResetForm={setResetForm} resetForm={resetForm} name="valor" type="text" label="Valor" required={true} />
+          <Field.InputValor setResetForm={setResetForm} resetForm={resetForm} name="valor" type="text" label="Valor" required={true} newValue={values.valor} />
           {valorError && <ErrorMsg>Valor precisar ser maior que 0</ErrorMsg>}
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.Input name="data" label="Data" required={true} type="date" defaultValue={currentDate} />
+          <Field.Input name="data" label="Data" required={true} type="date" defaultValue={values.data ? values.data : currentDate} />
         </div>
-        <Field.Submit label="Adicionar" />
+        <Field.Submit label={fn === 'add' ? 'Adicionar' : 'Editar'} />
     </form>
   )
 };
