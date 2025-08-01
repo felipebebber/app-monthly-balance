@@ -4,9 +4,9 @@ import NewExpenseContext from "../../hooks/NewExpenseContext";
 import monthNames from "../../data/months";
 import typeExpenses from "../../data/typeExpense";
 
-function Form({ type = 'row', fn = 'add', values = {} }) {
-  const newExpenseFn = useContext(NewExpenseContext);
-  // const inputValorRef = useRef(null);
+function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
+  const addExpensefn = useContext(NewExpenseContext);
+
   const [resetForm, setResetForm] = useState(false);
   const [valorError, setValorError] = useState(false);
   
@@ -25,7 +25,7 @@ function Form({ type = 'row', fn = 'add', values = {} }) {
       }
     }
     
-    const date = new Date(objExpense.data);
+    const date = new Date(`${objExpense.data}T00:00:00`);
     const month = date.getMonth();
     const year = date.getFullYear();
     objExpense.month = month;
@@ -35,14 +35,17 @@ function Form({ type = 'row', fn = 'add', values = {} }) {
     if (valorError) {
       setValorError(false);
     }
+    
     if (fn === 'add') {
-      newExpenseFn(objExpense);
+      addExpensefn(objExpense);
       setResetForm(true);
       e.currentTarget.reset();
       
     } else {
       fn(objExpense);
     }
+
+    callback !== null && callback();
   };
 
   const currentDate = (function() {
@@ -53,9 +56,9 @@ function Form({ type = 'row', fn = 'add', values = {} }) {
   })();
 
   return (
-   <form className={`text-sm flex gap-4 ${type == 'full' ? 'flex-col' : ''}`} onSubmit={handleSubmit}>
+   <form className={`text-sm flex gap-4 ${type == 'full' && 'flex-col'}`} onSubmit={handleSubmit}>
         <div className="flex-1 min-w-0 relative">
-          <Field.Select name="tipo" label='Tipo' required={true} defaultValue={values.tipo ? values.tipo : ''}>
+          <Field.Select name="tipo" label='Tipo' required={true} defaultValue={values.tipo}>
             {typeExpenses.map(function(item) {
               return (
                 <option key={item.id} value={item.id}>{item.value}</option>
@@ -64,7 +67,7 @@ function Form({ type = 'row', fn = 'add', values = {} }) {
           </Field.Select>
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.Input name="descricao" type="text" label="Descrição" defaultValue={values.descricao ? values.descricao : ''} />
+          <Field.Input name="descricao" type="text" label="Descrição" defaultValue={values.descricao} />
         </div>
         <div className="flex-1 min-w-0 relative">
           <Field.InputValor setResetForm={setResetForm} resetForm={resetForm} name="valor" type="text" label="Valor" required={true} newValue={values.valor} />

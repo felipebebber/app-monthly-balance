@@ -1,15 +1,21 @@
 import setStorage from "../utility/setStorage";
 
 const editExpense = function(expenseList, expense, id) {
-    const currentObj = expense;
-    const { year, month } = currentObj;
+    const { year, month } = expense;
 
-    expenseList[year] ||= {};
-    expenseList[year][month] ||= [];
-    expenseList[year][month][id] = expense;
-        
-    setStorage(month, year, expenseList);
-    return expenseList;
+    let monthArray = expenseList[year][month];
+    monthArray[id] = expense;
+
+    const newList = {
+        ...expenseList,
+        [year]: {
+            ...expenseList[year],
+            [month]: monthArray
+        }
+    };
+
+    setStorage(month, year, newList);
+    return newList;
 }
 
 export default editExpense;

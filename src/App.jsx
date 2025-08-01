@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import Expenses from './components/Expenses';
 import Chart from './components/Chart';
 import Balance from './components/Balance';
@@ -7,14 +7,35 @@ import NewExpenseContext from './hooks/NewExpenseContext';
 import Modal from './components/Modal';
 import FormEdit from './components/Expenses/Form';
 
-import newExpense from './controller/newExpense';
+import addExpense from './controller/addExpense';
 import removeExpense from './controller/removeExpense';
 import editExpense from './controller/editExpense';
+import GlobalContext from './hooks/GlobalContext';
+
+const initialValue = {}
+
+function ExpensesReducer(state, action) {
+  switch (action.type) {
+    case 'set': {
+      return action.expenses
+    };
+    case 'add': {
+      return addExpense(state, action.expense);
+    };
+    case 'edit': {
+      return editExpense(state, action.expense, action.id);
+    };
+    case 'remove': {
+      return removeExpense(state, action.month, action.year, action.id);
+    };
+    default:
+      break;
+  }
+}
 
 function App() {
   const date = new Date();
-
-  const [expenseList, setExpenseList] = useState({});
+  const [expenses, updateExpenses] = useReducer(ExpensesReducer, initialValue);
   const [currentMonth, setCurrentMonth] = useState(date.getMonth());
   const [currentYear, setCurrentYear] = useState(date.getFullYear());
   const [currentList, setCurrentList] = useState([]);
@@ -30,16 +51,18 @@ function App() {
       const date = new Date();
 
       if (storedExpenses) {
-        setExpenseList(JSON.parse(storedExpenses));
+        updateExpenses({type: 'set', expenses: JSON.parse(storedExpenses)});
 
         if (storedMonth) {
-          setCurrentMonth(storedMonth);
+          // setCurrentMonth(storedMonth);
+          setCurrentMonth(date.getMonth());
         } else {
           setCurrentMonth(date.getMonth());
         }
 
         if (storedYear) {
-          setCurrentYear(storedYear);
+          // setCurrentYear(storedYear);
+          setCurrentYear(date.getFullYear());
         } else {
           setCurrentYear(date.getFullYear());
         }
@@ -51,42 +74,38 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(expenseList).length > 0 && typeof expenseList[currentYear][currentMonth] !== 'undefined') {
-      setCurrentList(expenseList[currentYear][currentMonth]);
+    if (Object.keys(expenses).length > 0 && typeof expenses[currentYear] !== 'undefined') {
+      if (typeof expenses[currentYear][currentMonth] !== 'undefined') {
+        setCurrentList(expenses[currentYear][currentMonth]);
+      }
     }
-  }, [expenseList]);
+  }, [expenses]);
 
-  const newExpenseFn = function(expense) {
-    const newList = newExpense(expenseList, expense);
-    setExpenseList({...newList});
-  }
-  
+  const addExpensefn = (expense) => updateExpenses({type: 'add', expense: expense});
+
   const removeExpenseFn = function({month, year, id}) {
-    if (window.confirm("Deseja deletar essa dispesa?")) {
-      const newList = removeExpense(expenseList, month, year, id);
-      setExpenseList({...newList});
-    }
+    // setModalConfig({
+    //   type: 'confirm',
+    //   title: `Deseja remover Despesa [${id}] ?`,
+    //   callback: function() {
+    //   }
+    // });
+    updateExpenses({type: 'remove', month, year, id})
   }
   
-  const editExpenseFn = function(id, expense) {
-    const editExpenseFnRef = function(editedExpense) {
-      const newList = editExpense(expenseList, editedExpense, id);
-      setExpenseList({...newList});
-      setModalVisible(false);
-    }
+  const editExpenseFn = function(expense, id) {
     setModalConfig({
       title: `Edição de Despesa [${id}]`,
-      html: <FormEdit type="full" fn={editExpenseFnRef} values={expense} key={`${expense.month}${expense.year}${id}`} />
+      html: <FormEdit type="full" fn={(expense) => updateExpenses({type: 'edit', expense, id})} values={expense} key={`${expense.month}${expense.year}${id}`} callback={() =>  setModalVisible(false)}/>
     });
-    setModalVisible(true)
   }
 
   const resetExpenseList = function() {
-    if (Object.keys(expenseList).length > 0) {
+    if (Object.keys(expenses).length > 0) {
       localStorage.removeItem('expense-list');
       localStorage.removeItem('expense-month');
       localStorage.removeItem('expense-year');
-      setExpenseList({});
+      updateExpenses({type: 'set', expenses: {}});
 
       const date = new Date();
       setCurrentMonth(date.getMonth());
@@ -95,7 +114,7 @@ function App() {
   }
 
   return (
-    <>
+    <GlobalContext.Provider value={{setModalVisible, modalVisible, modalConfig}}>
     <div className="bg-gray-50 text-gray-800 h-lvh flex gap-4">
       <div className="grid gap-4 m-auto w-[800px] shadow-sm p-4 rounded-md grid-cols-1 bg-white">
         <div className='text-center'>
@@ -105,7 +124,7 @@ function App() {
         <hr className="border-0 border-t border-gray-200 my-2"/>
         <div className='flex flex-col gap-4'>
           <div className="w-full max-w-[800px] mx-auto">
-            <NewExpenseContext.Provider value={newExpenseFn}>
+            <NewExpenseContext.Provider value={addExpensefn}>
               <Expenses />
             </NewExpenseContext.Provider>
           </div>
@@ -130,8 +149,8 @@ function App() {
         </div>
         </div>
     </div>
-    <Modal modalConfig={modalConfig} setModalVisible={setModalVisible} modalVisible={modalVisible} />
-    </>
+    <Modal modalConfig={modalConfig} />
+    </GlobalContext.Provider>
   )
 };
 

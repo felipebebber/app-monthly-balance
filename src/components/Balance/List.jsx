@@ -49,7 +49,7 @@ function Tbody({ list }) {
                     <td className={`${classNameTd}`}>{formatData(data)}</td>
                     <td className={`${classNameTd}`}>
                       <div className="flex gap-2">
-                        <button className="p-1 text-gray-400 cursor-pointer" onClick={() => editExpenseFn(i, item)}><EditIcon /></button>
+                        <button className="p-1 text-gray-400 cursor-pointer" onClick={() => editExpenseFn(item, i)}><EditIcon /></button>
                         <button className="p-1 text-gray-400 cursor-pointer" onClick={() => removeExpenseFn(infoUpdateExpense)}><DeleteIcon /></button>
                       </div>
                     </td>
