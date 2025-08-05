@@ -1,13 +1,17 @@
 import { useEffect, useReducer, useState, useMemo } from 'react';
+
+import STORAGE_KEYS from './utility/storageKeys';
+
+import Block from './components/Block';
+import Modal from './components/Modal';
 import Expenses from './components/Expenses';
 import Chart from './components/Chart';
 import Balance from './components/Balance';
-import Block from './components/Block';
-import ExpenseContext from './context/ExpenseContext';
-import Modal from './components/Modal';
 import FormEdit from './components/Expenses/Form';
-import STORAGE_KEYS from './utility/storageKeys';
+
+import ExpenseContext from './context/ExpenseContext';
 import GlobalContext from './context/GlobalContext';
+
 import ExpensesReducer from './hooks/useExpensesReducer';
 
 const initialValue = {}
@@ -49,7 +53,7 @@ function App() {
   const removeExpenseFn = ({month, year, id}) => updateExpenses({type: 'remove', month, year, id});
 
   const removeExpenseModal = ({ id, ...rest }) => {
-    if (!id) return;
+    if (!Number.isInteger(id)) return;
     setModalConfig({
       type: 'confirm',
       text: <b>Deseja remover despesa {id}?</b>,
