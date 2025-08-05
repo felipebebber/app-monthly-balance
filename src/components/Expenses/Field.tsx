@@ -71,7 +71,7 @@ const Field = {
         )
     },
     Submit: function({ label }) {
-        return <button className={Field.styles()}>{label}</button>
+        return <button className={Field.styles('bg-blue-100')}>{label}</button>
     },
     Label: function({ label = '', children }) {
         return (

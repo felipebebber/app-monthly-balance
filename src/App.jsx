@@ -78,24 +78,26 @@ function App() {
       if (typeof expenses[currentYear][currentMonth] !== 'undefined') {
         setCurrentList(expenses[currentYear][currentMonth]);
       }
+    } else {
+      setCurrentList([])
     }
   }, [expenses]);
 
   const addExpensefn = (expense) => updateExpenses({type: 'add', expense: expense});
 
   const removeExpenseFn = function({month, year, id}) {
-    // setModalConfig({
-    //   type: 'confirm',
-    //   title: `Deseja remover Despesa [${id}] ?`,
-    //   callback: function() {
-    //   }
-    // });
-    updateExpenses({type: 'remove', month, year, id})
+    setModalConfig({
+      type: 'confirm',
+      text: <b>Deseja remover despesa {id}?</b>,
+      callback: function() {
+        updateExpenses({type: 'remove', month, year, id})
+      }
+    });
   }
   
   const editExpenseFn = function(expense, id) {
     setModalConfig({
-      title: `Edição de Despesa [${id}]`,
+      title: `Edição de despesa ${id}`,
       html: <FormEdit type="full" fn={(expense) => updateExpenses({type: 'edit', expense, id})} values={expense} key={`${expense.month}${expense.year}${id}`} callback={() =>  setModalVisible(false)}/>
     });
   }
