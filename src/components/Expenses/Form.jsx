@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
 import Field from "./Field";
-import NewExpenseContext from "../../hooks/NewExpenseContext";
+import ExpenseContext from "../../context/ExpenseContext";
 import monthNames from "../../data/months";
 import typeExpenses from "../../data/typeExpense";
 
 function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
-  const addExpensefn = useContext(NewExpenseContext);
+  const addExpensefn = useContext(ExpenseContext);
 
   const [resetForm, setResetForm] = useState(false);
   const [valorError, setValorError] = useState(false);

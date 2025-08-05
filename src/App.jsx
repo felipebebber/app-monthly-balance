@@ -1,71 +1,38 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useState, useMemo } from 'react';
 import Expenses from './components/Expenses';
 import Chart from './components/Chart';
 import Balance from './components/Balance';
 import Block from './components/Block';
-import NewExpenseContext from './hooks/NewExpenseContext';
+import ExpenseContext from './context/ExpenseContext';
 import Modal from './components/Modal';
 import FormEdit from './components/Expenses/Form';
-
-import addExpense from './controller/addExpense';
-import removeExpense from './controller/removeExpense';
-import editExpense from './controller/editExpense';
-import GlobalContext from './hooks/GlobalContext';
+import STORAGE_KEYS from './utility/storageKeys';
+import GlobalContext from './context/GlobalContext';
+import ExpensesReducer from './hooks/useExpensesReducer';
 
 const initialValue = {}
-
-function ExpensesReducer(state, action) {
-  switch (action.type) {
-    case 'set': {
-      return action.expenses
-    };
-    case 'add': {
-      return addExpense(state, action.expense);
-    };
-    case 'edit': {
-      return editExpense(state, action.expense, action.id);
-    };
-    case 'remove': {
-      return removeExpense(state, action.month, action.year, action.id);
-    };
-    default:
-      break;
-  }
-}
 
 function App() {
   const date = new Date();
   const [expenses, updateExpenses] = useReducer(ExpensesReducer, initialValue);
   const [currentMonth, setCurrentMonth] = useState(date.getMonth());
   const [currentYear, setCurrentYear] = useState(date.getFullYear());
-  const [currentList, setCurrentList] = useState([]);
   const [modalConfig, setModalConfig] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     try {
-      const storedExpenses = localStorage.getItem('expense-list');
-      const storedYear = localStorage.getItem('expense-year');
-      const storedMonth = localStorage.getItem('expense-month');
-
-      const date = new Date();
+      const storedExpenses = localStorage.getItem(STORAGE_KEYS.EXPENSES);
+      const storedYear = localStorage.getItem(STORAGE_KEYS.YEAR);
+      const storedMonth = localStorage.getItem(STORAGE_KEYS.MONTH);
 
       if (storedExpenses) {
         updateExpenses({type: 'set', expenses: JSON.parse(storedExpenses)});
+      }
 
-        if (storedMonth) {
-          // setCurrentMonth(storedMonth);
-          setCurrentMonth(date.getMonth());
-        } else {
-          setCurrentMonth(date.getMonth());
-        }
-
-        if (storedYear) {
-          // setCurrentYear(storedYear);
-          setCurrentYear(date.getFullYear());
-        } else {
-          setCurrentYear(date.getFullYear());
-        }
+      if (storedMonth && storedYear) {
+        setCurrentMonth(parseInt(storedMonth));
+        setCurrentYear(parseInt(storedYear));
       }
 
     } catch (error) {
@@ -73,40 +40,35 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    if (Object.keys(expenses).length > 0 && typeof expenses[currentYear] !== 'undefined') {
-      if (typeof expenses[currentYear][currentMonth] !== 'undefined') {
-        setCurrentList(expenses[currentYear][currentMonth]);
-      }
-    } else {
-      setCurrentList([])
-    }
-  }, [expenses]);
+  const currentList = useMemo(() => {
+    return expenses?.[currentYear]?.[currentMonth] || [];
+  }, [expenses, currentYear, currentMonth]);
 
   const addExpensefn = (expense) => updateExpenses({type: 'add', expense: expense});
+  const editExpenseFn = (expense, id) => updateExpenses({type: 'edit', expense, id});
+  const removeExpenseFn = ({month, year, id}) => updateExpenses({type: 'remove', month, year, id});
 
-  const removeExpenseFn = function({month, year, id}) {
+  const removeExpenseModal = ({ id, ...rest }) => {
+    if (!id) return;
     setModalConfig({
       type: 'confirm',
       text: <b>Deseja remover despesa {id}?</b>,
-      callback: function() {
-        updateExpenses({type: 'remove', month, year, id})
-      }
+      callback: () => removeExpenseFn({ id, ...rest })
+    });
+  };
+
+  const editExpenseModal = function(expense, id) {
+    setModalConfig({
+      title: `Edição de despesa ${id}`,
+      html: <FormEdit type="full" fn={(expenseSave) => editExpenseFn(expenseSave, id)} values={expense} key={`${expense.month}${expense.year}${id}`} callback={() =>  setModalVisible(false)}/>
     });
   }
   
-  const editExpenseFn = function(expense, id) {
-    setModalConfig({
-      title: `Edição de despesa ${id}`,
-      html: <FormEdit type="full" fn={(expense) => updateExpenses({type: 'edit', expense, id})} values={expense} key={`${expense.month}${expense.year}${id}`} callback={() =>  setModalVisible(false)}/>
-    });
-  }
-
   const resetExpenseList = function() {
     if (Object.keys(expenses).length > 0) {
-      localStorage.removeItem('expense-list');
-      localStorage.removeItem('expense-month');
-      localStorage.removeItem('expense-year');
+      localStorage.removeItem(STORAGE_KEYS.EXPENSES);
+      localStorage.removeItem(STORAGE_KEYS.YEAR);
+      localStorage.removeItem(STORAGE_KEYS.MONTH);
       updateExpenses({type: 'set', expenses: {}});
 
       const date = new Date();
@@ -117,47 +79,44 @@ function App() {
 
   return (
     <GlobalContext.Provider value={{setModalVisible, modalVisible, modalConfig}}>
-    <div className="bg-gray-50 text-gray-800 h-lvh flex gap-4">
-      <div className="grid gap-4 m-auto w-[800px] shadow-sm p-4 rounded-md grid-cols-1 bg-white">
-        <div className='text-center'>
-          <div className='font-bold text-4xl text-white w-fit m-auto p-2 pt-1 bg-blue-500 uppercase rounded'>Balanço Mensal</div>
-          <DateControl dates={{currentMonth, currentYear}} />
-        </div>
-        <hr className="border-0 border-t border-gray-200 my-2"/>
-        <div className='flex flex-col gap-4'>
-          <div className="w-full max-w-[800px] mx-auto">
-            <NewExpenseContext.Provider value={addExpensefn}>
-              <Expenses />
-            </NewExpenseContext.Provider>
+      <div className="bg-gray-50 text-gray-800 h-lvh flex gap-4">
+        <div className="grid gap-4 m-auto w-[800px] shadow-sm p-4 rounded-md grid-cols-1 bg-white">
+          <div className='text-center'>
+            <div className='font-bold text-4xl text-white w-fit m-auto p-2 pt-1 bg-blue-500 uppercase rounded'>Balanço Mensal</div>
+            <DateControlWrapper dates={{currentMonth, currentYear}} />
           </div>
-
-          <div className='flex gap-4 m-auto w-full h-[400px]'>
-            <div className="flex-4/12">
-              <Block title="Chart" className="h-full">
-                <Chart />
-              </Block>
+          <hr className="border-0 border-t border-gray-200 my-2"/>
+          <div className='flex flex-col gap-4'>
+            <div className="w-full max-w-[800px] mx-auto">
+              <ExpenseContext.Provider value={addExpensefn}>
+                <Expenses />
+              </ExpenseContext.Provider>
             </div>
-            <div className="flex-8/12">
-              <Block title="Balanço" className="h-full">
-                  <NewExpenseContext.Provider value={{editExpenseFn, removeExpenseFn}}>
-                    <Balance list={currentList} />
-                  </NewExpenseContext.Provider>
-              </Block>
+            <div className='flex gap-4 m-auto w-full h-[400px]'>
+              <div className="flex-4/12">
+                <Block title="Chart" className="h-full">
+                  <Chart />
+                </Block>
+              </div>
+              <div className="flex-8/12">
+                <Block title="Balanço" className="h-full">
+                    <ExpenseContext.Provider value={{editExpenseModal, removeExpenseModal}}>
+                      <Balance list={currentList} />
+                    </ExpenseContext.Provider>
+                </Block>
+              </div>
             </div>
-          </div>
-          <div className='text-right'>
-            <button className='border-red-300 border px-2 py-1 rounded text-sm' onClick={resetExpenseList}>Deletar Storage</button>
+            <DeleteStorage fn={resetExpenseList} />
           </div>
         </div>
-        </div>
-    </div>
-    <Modal modalConfig={modalConfig} />
+      </div>
+      <Modal modalConfig={modalConfig} />
     </GlobalContext.Provider>
   )
 };
 
 
-function DateControl({ dates: { currentMonth, currentYear }}) {
+function DateControlWrapper({ dates: { currentMonth, currentYear }}) {
   const monthParser = parseInt(currentMonth) + 1;
   return (
     <div className='flex items-center justify-center gap-3'>
@@ -174,6 +133,15 @@ function DateControl({ dates: { currentMonth, currentYear }}) {
 function DateControlBtn({ children }) {
   return (
     <button className='px-2 py-1 uppercase text-xs bg-gray-200'>{children}</button>
+  )
+};
+
+
+function DeleteStorage({ fn }) {
+  return (
+    <div className='text-right'>
+        <button className='border-red-300 border px-2 py-1 rounded text-sm' onClick={fn}>Deletar Storage</button>
+      </div>
   )
 };
 

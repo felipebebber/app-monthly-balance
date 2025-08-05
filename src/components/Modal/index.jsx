@@ -1,7 +1,7 @@
 import { useEffect, useContext } from "react";
 import Block from "../Block/";
 import CloseIcon from "../../assets/icons/close.svg?react";
-import GlobalContext from '../../hooks/GlobalContext';
+import GlobalContext from '../../context/GlobalContext';
 import Confirm from "./Confirm";
 import Body from "./Body";
 

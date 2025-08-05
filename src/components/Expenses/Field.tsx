@@ -25,9 +25,6 @@ const Field = {
     InputValor: function(props: Input) {
         const [amount, setAmount] = useState(props.newValue ? props.newValue.replace(/\D/g, '') : '');
 
-        // console.log(amount);
-        // console.log(props.newValue);
-
         useEffect(() => {
             if (props.resetForm) {
                 props.setResetForm(false);
@@ -51,9 +48,7 @@ const Field = {
         })
         .format(Number(amount) / 100 || 0)
         .replace('\u00A0', ' ');
-
-        // console.log(formattedAmount);
-        
+                
         return (
             <Field.Label label={props.label}>
                 <input name={props.name} type={props.type} required={props.required} className={Field.styles('flex-1')} value={formattedAmount} onChange={handleChange} />

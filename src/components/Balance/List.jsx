@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import NewExpenseContext from "../../hooks/NewExpenseContext";
+import ExpenseContext from "../../context/ExpenseContext";
 import EditIcon from '../../assets/icons/edit.svg?react';
 import DeleteIcon from '../../assets/icons/delete.svg?react';
 import formatData from "../../utility/formatData";
@@ -29,7 +29,7 @@ function Thead({ items }) {
 
 function Tbody({ list }) {
   const classNameTd = "px-2 pb-2";
-  const { removeExpenseFn, editExpenseFn } = useContext(NewExpenseContext);
+  const { removeExpenseModal, editExpenseModal } = useContext(ExpenseContext);
 
   return (
     <tbody className="border-t-8 border-b-8 border-transparent text-sm">
@@ -49,8 +49,8 @@ function Tbody({ list }) {
                     <td className={`${classNameTd}`}>{formatData(data)}</td>
                     <td className={`${classNameTd}`}>
                       <div className="flex gap-2">
-                        <button className="p-1 text-gray-400 cursor-pointer" onClick={() => editExpenseFn(item, i)}><EditIcon /></button>
-                        <button className="p-1 text-gray-400 cursor-pointer" onClick={() => removeExpenseFn(infoUpdateExpense)}><DeleteIcon /></button>
+                        <button className="p-1 text-gray-400 cursor-pointer" onClick={() => editExpenseModal(item, i)}><EditIcon /></button>
+                        <button className="p-1 text-gray-400 cursor-pointer" onClick={() => removeExpenseModal(infoUpdateExpense)}><DeleteIcon /></button>
                       </div>
                     </td>
                 </tr>

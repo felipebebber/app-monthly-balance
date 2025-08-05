@@ -1,12 +1,14 @@
+import STORAGE_KEYS from './storageKeys';
+
 const setStorage = function(month, year, list) {
   if (Object.keys(list).length > 0) {
-    localStorage.setItem('expense-month', month);
-    localStorage.setItem('expense-year', year);
-    localStorage.setItem('expense-list', JSON.stringify(list));
+    localStorage.setItem(STORAGE_KEYS.MONTH, month);
+    localStorage.setItem(STORAGE_KEYS.YEAR, year);
+    localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(list));
   } else {
-    localStorage.removeItem('expense-month');
-    localStorage.removeItem('expense-year');
-    localStorage.removeItem('expense-list');
+    localStorage.removeItem(STORAGE_KEYS.MONTH);
+    localStorage.removeItem(STORAGE_KEYS.YEAR);
+    localStorage.removeItem(STORAGE_KEYS.EXPENSES);
   }
  }
 
