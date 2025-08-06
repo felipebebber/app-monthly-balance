@@ -11,6 +11,7 @@ const addExpense = function(expenseList, expense) {
     }
 
     const newList = {
+        ...expenseList,
         [year]: {
             ...expenseList[year],
             [month]: [
