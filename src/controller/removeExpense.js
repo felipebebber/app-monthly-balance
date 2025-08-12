@@ -3,6 +3,8 @@ import setStorage from "../utility/setStorage";
 function removeExpense(expenseList, month, year, id) {
     let arrayRef = [ ...expenseList[year][month] ];
     arrayRef.splice(id, 1);
+    let currentMonth = month;
+    let currentYear = year;
 
     let newList = {};
 
@@ -23,8 +25,22 @@ function removeExpense(expenseList, month, year, id) {
                     }
                 } 
             }
+            
+            const date = new Date();
+
+            if (Object.keys(newList).length === 0) {
+                currentMonth = date.getMonth().toString();
+                currentYear = date.getFullYear().toString();
+
+            } else {
+                const nextYear = Object.keys(newList)[Object.keys(newList).length - 1];
+                currentMonth = Object.keys(newList[nextYear])[0];
+                currentYear = nextYear;
+            }
                         
         } else {
+            currentMonth = Object.keys(newYearMonths)[0];
+
             newList = {
                 ...expenseList,
                 [year]: newYearMonths
@@ -42,7 +58,7 @@ function removeExpense(expenseList, month, year, id) {
         }
     }
 
-    setStorage(month, year, newList);
+    setStorage(currentMonth, currentYear, newList);
     return newList;
 };
 

@@ -9,13 +9,13 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
 
   const [resetForm, setResetForm] = useState(false);
   const [valorError, setValorError] = useState(false);
+  const [dataError, setDataError] = useState(false);
   
   const handleSubmit = (e) => {
     const formData = new FormData(e.currentTarget);
     e.preventDefault();
 
     let objExpense = {};
-    
     
     for (let [key, value] of formData.entries()) {
       objExpense[key] = value;
@@ -26,16 +26,25 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
     }
     
     const date = new Date(`${objExpense.data}T00:00:00`);
-    const month = date.getMonth();
-    const year = date.getFullYear();
+    if (isNaN(date)) {
+      setDataError(true);
+      return false;
+    }
+
+    const month = date.getMonth().toString();
+    const year = date.getFullYear().toString();
     objExpense.month = month;
     objExpense.monthName = monthNames[month];
     objExpense.year = year;
-
+    
     if (valorError) {
       setValorError(false);
     }
-    
+
+    if (dataError) {
+      setValorError(false);
+    }
+     
     if (fn === 'add') {
       addExpensefn(objExpense);
       setResetForm(true);
@@ -75,6 +84,7 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
         </div>
         <div className="flex-1 min-w-0 relative">
           <Field.Input name="data" label="Data" required={true} type="date" defaultValue={values.data ? values.data : currentDate} />
+          {dataError && <ErrorMsg>Data inválida</ErrorMsg>}
         </div>
         <Field.Submit label={fn === 'add' ? 'Adicionar' : 'Editar'} />
     </form>

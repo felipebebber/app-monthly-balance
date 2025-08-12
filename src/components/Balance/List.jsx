@@ -4,6 +4,13 @@ import EditIcon from '../../assets/icons/edit.svg?react';
 import DeleteIcon from '../../assets/icons/delete.svg?react';
 import formatData from "../../utility/formatData";
 
+const colorRef = {
+  'Comida': 'border-l-yellow-500',
+  'Saúde': 'border-l-green-500',
+  'Diversão': 'border-l-red-500',
+  'Casa': 'border-l-blue-500',
+}
+
 function List({ list = false }) {
   return (
     <table className="w-full text-left text-sm">
@@ -28,18 +35,18 @@ function Thead({ items }) {
 };
 
 function Tbody({ list }) {
-  const classNameTd = "px-2 pb-2";
+  const classNameTd = "px-2 py-1";
   const { removeExpenseModal, editExpenseModal } = useContext(ExpenseContext);
 
   return (
-    <tbody className="border-t-8 border-b-8 border-transparent text-sm">
+    <tbody className="text-sm">
         {list.map(function(item, i) {
           // console.log(item);
             const { descricao, tipo, valor, data, month, year } = item;
             const infoUpdateExpense = { month, year, id: i };
             return (
-                <tr key={i}>
-                    <td className={`${classNameTd} first:pl-4`}>{tipo}</td>
+                <tr key={i} className="border-b border-b-gray-200">
+                    <td className={`${classNameTd} first:pl-4 border-l-2 ${colorRef[tipo]}`}>{tipo}</td>
                     <td className={`${classNameTd}`}>
                         <div className="overflow-ellipsis overflow-hidden whitespace-nowrap max-w-[100px]">
                             {descricao}

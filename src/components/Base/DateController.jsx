@@ -1,23 +1,24 @@
 import { useState, useCallback, useEffect } from "react";
 
 function DateControlWrapper({values: {expenses, currentMonth, currentYear, setCurrentYear, setCurrentMonth}}) {
-  const [selectMonthOptions, setSelectMonthOptions] = useState([currentMonth.toString()]);
-  const [selectYearOptions, setSelectYearOptions] = useState([currentYear.toString()]);
+  const [selectMonthOptions, setSelectMonthOptions] = useState([currentMonth]);
+  const [selectYearOptions, setSelectYearOptions] = useState([currentYear]);
 
-  console.log(selectMonthOptions)
-  console.log(selectYearOptions)
-    
   useEffect(() => {
     if (Object.keys(expenses).length > 0) {
       const years = [];
       const months = [];
 
-      for (const [key] of Object.entries(expenses)) {
-        years.push(key);
-      }
-
-      for (const [key] of Object.entries(expenses[currentYear])) {
-        months.push(key);
+      if (typeof expenses[currentYear] !== 'undefined') {
+        console.log(currentMonth);
+        console.log(currentYear);
+        for (const [key] of Object.entries(expenses)) {
+          years.push(key);
+        }
+        
+        for (const [key] of Object.entries(expenses[currentYear])) {
+          months.push(key);
+        }
       }
 
       if (years.length > 0) setSelectYearOptions(years);
@@ -26,18 +27,16 @@ function DateControlWrapper({values: {expenses, currentMonth, currentYear, setCu
   }, [expenses, currentMonth, currentYear]);
 
   const handleChangeYear = function(e) {
-    console.log('handleChangeYear');
     const changedYear = e.currentTarget.value;
 
     if (typeof expenses[changedYear][currentMonth] === 'undefined') {
-      setCurrentMonth(parseInt(Object.keys(expenses[changedYear])[0]))
+      setCurrentMonth(Object.keys(expenses[changedYear])[0])
     }
     setCurrentYear(e.currentTarget.value);
   };
   
   const handleChangeMonth = useCallback(function(e) {
-    console.log('handleChangeMonth');
-    const changedMonth = parseInt(e.currentTarget.value);
+    const changedMonth = e.currentTarget.value;
     setCurrentMonth(changedMonth);
   }, [])
   
@@ -46,7 +45,7 @@ function DateControlWrapper({values: {expenses, currentMonth, currentYear, setCu
       <div className='text-2xl border-t-0 text-gray-500 border flex border-blue-200 rounded-b'>
         <div className='capitalize border-r border-blue-200 px-2 py-1 min-w-[66px]'>
               <select value={currentMonth} onChange={handleChangeMonth}>
-                {selectMonthOptions.map(function(item, i) {
+                {selectMonthOptions && selectMonthOptions.map(function(item, i) {
                   const month = parseInt(item);
                   const monthParsed = month + 1;
                   const monthFinal = monthParsed > 9 ? monthParsed : "0" + monthParsed;
@@ -58,7 +57,7 @@ function DateControlWrapper({values: {expenses, currentMonth, currentYear, setCu
           </div>
         <div className='px-2 py-1 min-w-[92px]'>
           <select value={currentYear} onChange={handleChangeYear}>
-            {selectYearOptions.map(function(year, i) {
+            {selectYearOptions && selectYearOptions.map(function(year, i) {
               return (
                 <option key={`${i}-${year}`} value={year}>{year}</option>
               )

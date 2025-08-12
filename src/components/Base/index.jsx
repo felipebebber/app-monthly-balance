@@ -15,14 +15,14 @@ import GlobalContext from '../../context/GlobalContext';
 
 import ExpensesReducer from '../../hooks/useExpensesReducer';
 
-
 const initialValue = {}
 
 function Base() {
     const date = new Date();
+
+    const [currentMonth, setCurrentMonth] = useState(date.getMonth().toString());
+    const [currentYear, setCurrentYear] = useState(date.getFullYear().toString());
     const [expenses, updateExpenses] = useReducer(ExpensesReducer, initialValue);
-    const [currentMonth, setCurrentMonth] = useState(date.getMonth());
-    const [currentYear, setCurrentYear] = useState(date.getFullYear());
     const [modalConfig, setModalConfig] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -37,30 +37,35 @@ function Base() {
             }
             
             if (storedMonth && storedYear) {
-                setCurrentMonth(parseInt(storedMonth));
-                setCurrentYear(parseInt(storedYear));
+                setCurrentMonth(storedMonth);
+                setCurrentYear(storedYear);
             }
             
         } catch (error) {
             console.error('Failed to load expenses:', error);
         }
     }, []);
-    
 
-    // console.log(currentYear);
-    // console.log(currentMonth);
-    
+    useEffect(() => {
+        const storedYear = localStorage.getItem(STORAGE_KEYS.YEAR);
+        const storedMonth = localStorage.getItem(STORAGE_KEYS.MONTH);
+
+        if (storedMonth && storedMonth !== currentMonth) {
+            setCurrentMonth(storedMonth);
+        }
+        
+        if (storedYear && storedYear !== currentYear) {
+            setCurrentYear(storedYear);
+        }
+        
+    }, [expenses]);
+
     const currentList = useMemo(() => {
         return expenses?.[currentYear]?.[currentMonth] || [];
     }, [expenses, currentYear, currentMonth]);
     
-    
     const addExpensefn = useCallback(
-        (expense) => {
-                updateExpenses({ type: 'add', expense });
-                setCurrentMonth(expense.month);
-                setCurrentYear(expense.year);
-            },
+        (expense) => updateExpenses({ type: 'add', expense }),
         [updateExpenses]
     );
 
@@ -80,7 +85,7 @@ function Base() {
             setModalConfig({
             type: 'confirm',
             text: <b>Deseja remover despesa {id}?</b>,
-            callback: () => removeExpenseFn({ id, ...rest })
+                callback: () => removeExpenseFn({ id, ...rest })
             });
         },
         [removeExpenseFn]
