@@ -49,7 +49,7 @@ function Tbody({ list }) {
                             {descricao}
                         </div>
                     </td>
-                    <td className={`${classNameTd}`}>{valor}</td>
+                    <td className={`${classNameTd} whitespace-nowrap`}>{valor}</td>
                     <td className={`${classNameTd}`}>{formatData(data)}</td>
                     <td className={`${classNameTd}`}>
                       <div className="flex gap-2">

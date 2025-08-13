@@ -6,7 +6,7 @@ type Block = {
   children: JSX.Element | JSX.Element[],
   title?: boolean | string,
   className: null | string,
-  HeaderBtn?: boolean | (() => JSX.Element)
+  HeaderBtn?: boolean | JSX.Element
 }
 
 function Block({ children, title = false, className = null, HeaderBtn = false }: Block) {
@@ -14,7 +14,7 @@ function Block({ children, title = false, className = null, HeaderBtn = false }:
     <div className={`shadow-sm rounded-md bg-blue-50 ${className ? className : ''}`}>
       <div className="flex flex-col h-full">
         {title && <BlockTitle>
-          {title}{HeaderBtn && HeaderBtn}
+          {title}{HeaderBtn !== false && HeaderBtn}
         </BlockTitle>}
         <div className="flex-1 flex-col flex overflow-hidden">
           {children}

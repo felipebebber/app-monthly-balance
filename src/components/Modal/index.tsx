@@ -26,10 +26,10 @@ function Modal() {
     }
 
     return (
-        <div className={`jsCloseModal fixed z-10 w-full h-full top-0 bottom-0 bg-white/50 text-black transition-all flex ${modalVisible ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+        <div className={`jsCloseModal p-2 fixed z-10 w-full h-full top-0 bottom-0 bg-white/50 text-black transition-all flex ${modalVisible ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
             onClick={close}
         >
-            <Block className="m-auto bg-white shadow-sm w-[400px] relative" title={modalConfig.title} HeaderBtn={ModalCloseBtn}>
+            <Block className="m-auto bg-white shadow-sm w-[400px] relative" title={modalConfig.title} HeaderBtn={<ModalCloseBtn />}>
                 <div className="p-6">
                     {modalConfig.text && <Body><p>{modalConfig.text}</p></Body>}
                     {modalConfig.html && modalConfig.html }

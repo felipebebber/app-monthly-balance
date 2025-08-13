@@ -10,8 +10,8 @@ function DateControlWrapper({values: {expenses, currentMonth, currentYear, setCu
       const months: string[] = [];
 
       if (typeof expenses[currentYear] !== 'undefined') {
-        console.log(currentMonth);
-        console.log(currentYear);
+        // console.log(currentMonth);
+        // console.log(currentYear);
         
         for (const [key] of Object.entries(expenses)) {
           years.push(key);

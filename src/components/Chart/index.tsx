@@ -9,8 +9,6 @@ import ChartDataLables from 'chartjs-plugin-datalabels';
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLables);
 
 function Chart({ list }) {
-  // console.log(list);
-
   const refType = {};
   let data: number[] = [];
   let colors: string[] = [];
@@ -41,7 +39,7 @@ function Chart({ list }) {
 
   return (
     <div className='p-2'>
-      <Pie width={"100%"} data={
+      <Pie className="m-x-auto" width={"100%"} style={{maxWidth: '100%'}} data={
         {
           labels: [...Object.keys(refType)],
           datasets: [

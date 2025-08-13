@@ -67,7 +67,7 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}: FormTyp
   })();
 
   return (
-   <form className={`text-sm flex gap-4 ${type == 'full' && 'flex-col'}`} onSubmit={handleSubmit}>
+   <form className={`text-sm flex gap-4  flex-col ${type == 'full' ? 'flex-col' : 'md:flex-row'}`} onSubmit={handleSubmit}>
         <div className="flex-1 min-w-0 relative">
           <Field.Select name="tipo" label='Tipo' required={true} defaultValue={values['tipo']}>
             {Object.keys(typeExpenses).map(function(item) {
