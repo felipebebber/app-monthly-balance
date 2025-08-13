@@ -10,18 +10,20 @@ import Balance from '../Balance';
 import FormEdit from '../FormExpenses/Form';
 import DateControlWrapper from './DateController';
 
-import ExpenseContext from '../../context/ExpenseContext';
+import FormContext from '../../context/FormContext';
+import TableContext from '../../context/TableContext';
 import GlobalContext from '../../context/GlobalContext';
 
 import ExpensesReducer from '../../hooks/useExpensesReducer';
+import RemoveType from '../../types/RemoveType';
 
 const initialValue = {}
 
 function Base() {
     const date = new Date();
 
-    const [currentMonth, setCurrentMonth] = useState(date.getMonth().toString());
-    const [currentYear, setCurrentYear] = useState(date.getFullYear().toString());
+    const [currentMonth, setCurrentMonth] = useState<string>(date.getMonth().toString());
+    const [currentYear, setCurrentYear] = useState<string>(date.getFullYear().toString());
     const [expenses, updateExpenses] = useReducer(ExpensesReducer, initialValue);
     const [modalConfig, setModalConfig] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
@@ -80,12 +82,14 @@ function Base() {
     );
 
     const removeExpenseModal = useCallback(
-        ({ id, ...rest }) => {
+        ({ id, ...rest }: RemoveType) => {
             if (!Number.isInteger(id)) return;
             setModalConfig({
             type: 'confirm',
             text: <b>Deseja remover despesa {id}?</b>,
-                callback: () => removeExpenseFn({ id, ...rest })
+                callback: () => { 
+                    removeExpenseFn({ id, ...rest })   
+                }
             });
         },
         [removeExpenseFn]
@@ -109,8 +113,8 @@ function Base() {
             updateExpenses({type: 'set', expenses: {}});
             
             const date = new Date();
-            setCurrentMonth(date.getMonth());
-            setCurrentYear(date.getFullYear());
+            setCurrentMonth(date.getMonth().toString());
+            setCurrentYear(date.getFullYear().toString());
         }
     }
     
@@ -125,9 +129,9 @@ function Base() {
                     <hr className="border-0 border-t border-gray-200 my-2"/>
                     <div className='flex flex-col gap-4'>
                         <div className="w-full max-w-[800px] mx-auto">
-                            <ExpenseContext.Provider value={addExpensefn}>
+                            <FormContext.Provider value={addExpensefn}>
                                 <FormExpenses />
-                            </ExpenseContext.Provider>
+                            </FormContext.Provider>
                         </div>
                         <div className='flex gap-4 m-auto w-full h-[400px]'>
                             <div className="flex-4/12">
@@ -137,9 +141,9 @@ function Base() {
                             </div>
                             <div className="flex-8/12">
                                 <Block title="Balanço" className="h-full">
-                                    <ExpenseContext.Provider value={{editExpenseModal, removeExpenseModal}}>
+                                    <TableContext.Provider value={{editExpenseModal, removeExpenseModal}}>
                                         <Balance list={currentList} />
-                                    </ExpenseContext.Provider>
+                                    </TableContext.Provider>
                                 </Block>
                             </div>
                         </div>
@@ -153,7 +157,7 @@ function Base() {
                     </div>
                 </div>
             </div>
-            <Modal modalConfig={modalConfig} />
+            <Modal />
         </GlobalContext.Provider>
     )
 };

@@ -1,5 +1,6 @@
 import { useEffect, useContext } from "react";
-import Block from "../Block/";
+import Block from "../Block";
+// @ts-expect-error
 import CloseIcon from "../../assets/icons/close.svg?react";
 import GlobalContext from '../../context/GlobalContext';
 import Confirm from "./Confirm";
@@ -21,7 +22,7 @@ function Modal() {
     }, [modalConfig]);
 
     const ModalCloseBtn = function() {
-        return <button className="jsCloseModal" onClick={() => {setModalVisible(false)}}><CloseIcon /></button>        
+        return <button className="jsCloseModal" onClick={() => {setModalVisible(false)}}><CloseIcon /></button>
     }
 
     return (

@@ -8,7 +8,8 @@ type Input = {
     value?: string,
     resetForm?: boolean,
     newValue?: string,
-    setResetForm: (boolean) => void
+    defaultValue?: string,
+    setResetForm?: (boolean) => void
 }
 
 const Field = {
@@ -26,7 +27,7 @@ const Field = {
         const [amount, setAmount] = useState(props.newValue ? props.newValue.replace(/\D/g, '') : '');
 
         useEffect(() => {
-            if (props.resetForm) {
+            if (props.resetForm && props.setResetForm ) {
                 props.setResetForm(false);
                 setAmount('');
             }

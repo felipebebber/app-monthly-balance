@@ -12,8 +12,8 @@ function Chart({ list }) {
   // console.log(list);
 
   const refType = {};
-  let data = [];
-  let colors = [];
+  let data: number[] = [];
+  let colors: string[] = [];
   let totalSum = 0;
   
   if (list.length > 0) {
@@ -64,11 +64,10 @@ function Chart({ list }) {
             },
             datalabels: {
               color: "#fff",
-              font: {size: '10px'},
+              font: { size: 10 },
               backgroundColor: 'rgba(0,0,0,0.4)',
               formatter: function(value, context) {
-                return `${context.chart.data.labels[context.dataIndex]}\n${value} (${(value/totalSum * 100).toFixed(2)}%)`;
-                // return context.chart.data.labels[context.dataIndex];
+                return `${context.chart.data.labels![context.dataIndex]}\n${value} (${(value/totalSum * 100).toFixed(2)}%)`;
               }
             },
           }

@@ -1,5 +1,5 @@
 import List from "./List";
-import CalculateExpensesFn from "../../utility/calculateExpense";
+import CalculateExpensesFn from "../../utility/calculateExpense.ts";
 
 function Balance({ list }) {
   const total = CalculateExpensesFn(list);

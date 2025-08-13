@@ -1,11 +1,13 @@
 import { useContext, useState } from "react";
 import Field from "./Field";
-import ExpenseContext from "../../context/ExpenseContext";
+import FormContext from "../../context/FormContext";
 import monthNames from "../../data/months";
 import typeExpenses from "../../data/typeExpense";
 
-function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
-  const addExpensefn = useContext(ExpenseContext);
+type FormType = { type?: string, fn?: string | Function, values?: object, callback?: null | Function}
+
+function Form({ type = 'row', fn = 'add', values = {}, callback = null}: FormType) {
+  const addExpensefn = useContext(FormContext);
 
   const [resetForm, setResetForm] = useState(false);
   const [valorError, setValorError] = useState(false);
@@ -25,32 +27,32 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
       }
     }
     
-    const date = new Date(`${objExpense.data}T00:00:00`);
-    if (isNaN(date)) {
+    const date = new Date(`${objExpense['data']}T00:00:00`);
+    if (isNaN(date.getTime())) {
       setDataError(true);
       return false;
     }
 
     const month = date.getMonth().toString();
     const year = date.getFullYear().toString();
-    objExpense.month = month;
-    objExpense.monthName = monthNames[month];
-    objExpense.year = year;
+    objExpense['month'] = month;
+    objExpense['monthName'] = monthNames[month];
+    objExpense['year'] = year;
     
     if (valorError) {
       setValorError(false);
     }
 
     if (dataError) {
-      setValorError(false);
+      setDataError(false);
     }
-     
-    if (fn === 'add') {
+    console.log(typeof fn);
+    if (fn === 'add' && addExpensefn !== null) {
       addExpensefn(objExpense);
       setResetForm(true);
       e.currentTarget.reset();
       
-    } else {
+    } else if (typeof fn === 'function') {
       fn(objExpense);
     }
 
@@ -67,7 +69,7 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
   return (
    <form className={`text-sm flex gap-4 ${type == 'full' && 'flex-col'}`} onSubmit={handleSubmit}>
         <div className="flex-1 min-w-0 relative">
-          <Field.Select name="tipo" label='Tipo' required={true} defaultValue={values.tipo}>
+          <Field.Select name="tipo" label='Tipo' required={true} defaultValue={values['tipo']}>
             {Object.keys(typeExpenses).map(function(item) {
               const cObj = typeExpenses[item];
               return (
@@ -77,14 +79,14 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
           </Field.Select>
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.Input name="descricao" type="text" label="Descrição" defaultValue={values.descricao} />
+          <Field.Input name="descricao" type="text" label="Descrição" defaultValue={values['descricao']} />
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.InputValor setResetForm={setResetForm} resetForm={resetForm} name="valor" type="text" label="Valor" required={true} newValue={values.valor} />
+          <Field.InputValor setResetForm={setResetForm} resetForm={resetForm} name="valor" type="text" label="Valor" required={true} newValue={values['valor']} />
           {valorError && <ErrorMsg>Valor precisar ser maior que 0</ErrorMsg>}
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.Input name="data" label="Data" required={true} type="date" defaultValue={values.data ? values.data : currentDate} />
+          <Field.Input name="data" label="Data" required={true} type="date" defaultValue={values['data'] ? values['data'] : currentDate} />
           {dataError && <ErrorMsg>Data inválida</ErrorMsg>}
         </div>
         <Field.Submit label={fn === 'add' ? 'Adicionar' : 'Editar'} />

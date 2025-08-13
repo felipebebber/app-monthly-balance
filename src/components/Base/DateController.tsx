@@ -6,12 +6,13 @@ function DateControlWrapper({values: {expenses, currentMonth, currentYear, setCu
 
   useEffect(() => {
     if (Object.keys(expenses).length > 0) {
-      const years = [];
-      const months = [];
+      const years: string[] = [];
+      const months: string[] = [];
 
       if (typeof expenses[currentYear] !== 'undefined') {
         console.log(currentMonth);
         console.log(currentYear);
+        
         for (const [key] of Object.entries(expenses)) {
           years.push(key);
         }

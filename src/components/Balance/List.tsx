@@ -1,16 +1,18 @@
 import { useContext } from "react";
-import ExpenseContext from "../../context/ExpenseContext";
+import ExpenseContext from "../../context/TableContext";
+// @ts-expect-error
 import EditIcon from '../../assets/icons/edit.svg?react';
+// @ts-expect-error
 import DeleteIcon from '../../assets/icons/delete.svg?react';
 import formatData from "../../utility/formatData";
 import typeExpenses from "../../data/typeExpense";
 import slugify from "../../utility/slugify";
 
-function List({ list = false }) {
+function List({ list = false }: { list: boolean | []}) {
   return (
     <table className="w-full text-left text-sm">
         <Thead items={['Tipo', 'Descrição', 'Valor', 'Data', '']} />
-        {list.length > 0 && <Tbody list={list} />}
+        {(typeof list === 'object' && list.length > 0) && <Tbody list={list} />}
     </table>
   )
 };
