@@ -68,9 +68,10 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}) {
    <form className={`text-sm flex gap-4 ${type == 'full' && 'flex-col'}`} onSubmit={handleSubmit}>
         <div className="flex-1 min-w-0 relative">
           <Field.Select name="tipo" label='Tipo' required={true} defaultValue={values.tipo}>
-            {typeExpenses.map(function(item) {
+            {Object.keys(typeExpenses).map(function(item) {
+              const cObj = typeExpenses[item];
               return (
-                <option key={item.id} value={item.id}>{item.value}</option>
+                <option key={cObj.id} value={cObj.name}>{cObj.name}</option>
               )
             })}
           </Field.Select>

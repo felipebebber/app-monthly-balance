@@ -3,13 +3,8 @@ import ExpenseContext from "../../context/ExpenseContext";
 import EditIcon from '../../assets/icons/edit.svg?react';
 import DeleteIcon from '../../assets/icons/delete.svg?react';
 import formatData from "../../utility/formatData";
-
-const colorRef = {
-  'Comida': 'border-l-yellow-500',
-  'Saúde': 'border-l-green-500',
-  'Diversão': 'border-l-red-500',
-  'Casa': 'border-l-blue-500',
-}
+import typeExpenses from "../../data/typeExpense";
+import slugify from "../../utility/slugify";
 
 function List({ list = false }) {
   return (
@@ -46,7 +41,7 @@ function Tbody({ list }) {
             const infoUpdateExpense = { month, year, id: i };
             return (
                 <tr key={i} className="border-b border-b-gray-200">
-                    <td className={`${classNameTd} first:pl-4 border-l-2 ${colorRef[tipo]}`}>{tipo}</td>
+                    <td className={`${classNameTd} first:pl-4 border-l-2 ${typeExpenses[slugify(tipo)].borderColor}`}>{tipo}</td>
                     <td className={`${classNameTd}`}>
                         <div className="overflow-ellipsis overflow-hidden whitespace-nowrap max-w-[100px]">
                             {descricao}

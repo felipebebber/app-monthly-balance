@@ -132,7 +132,7 @@ function Base() {
                         <div className='flex gap-4 m-auto w-full h-[400px]'>
                             <div className="flex-4/12">
                                 <Block title="Chart" className="h-full">
-                                    <Chart />
+                                    <Chart list={currentList} />
                                 </Block>
                             </div>
                             <div className="flex-8/12">
