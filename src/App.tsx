@@ -1,4 +1,4 @@
-import Base from '/src/components/Base';
+import Base from './components/Base';
 
 function App() {
   return (
