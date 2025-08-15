@@ -19,6 +19,7 @@ import RemoveType from '../../types/RemoveType';
 
 const initialValue = {}
 const getDateParts = (d = new Date()) => ({
+  day: d.getDate().toString(),
   month: d.getMonth().toString(),
   year: d.getFullYear().toString(),
 });
@@ -28,6 +29,7 @@ function Base() {
 
     const [currentMonth, setCurrentMonth] = useState(getDateParts().month);
     const [currentYear, setCurrentYear] = useState(getDateParts().year);
+    const [currentDay, setCurrentDay] = useState(getDateParts().day);
     const [expenses, updateExpenses] = useReducer(ExpensesReducer, initialValue);
     const [modalConfig, setModalConfig] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
@@ -36,20 +38,27 @@ function Base() {
         const storedExpenses = localStorage.getItem(STORAGE_KEYS.EXPENSES);
         const storedYear = localStorage.getItem(STORAGE_KEYS.YEAR);
         const storedMonth = localStorage.getItem(STORAGE_KEYS.MONTH);
+        const storedDay = localStorage.getItem(STORAGE_KEYS.DAY);
         
         if (storedExpenses) {
             updateExpenses({type: 'set', expenses: JSON.parse(storedExpenses)});
         }
         
-        if (storedMonth && storedYear) {
+        if (storedMonth && storedYear && storedDay) {
             setCurrentMonth(storedMonth);
             setCurrentYear(storedYear);
+            setCurrentDay(storedDay);
         }
     }, []);
 
     useEffect(() => {
         const storedYear = localStorage.getItem(STORAGE_KEYS.YEAR);
         const storedMonth = localStorage.getItem(STORAGE_KEYS.MONTH);
+        const storedDay = localStorage.getItem(STORAGE_KEYS.DAY);
+
+        if (storedDay && storedDay !== currentDay) {
+            setCurrentDay(storedDay);
+        }
 
         if (storedMonth && storedMonth !== currentMonth) {
             setCurrentMonth(storedMonth);
@@ -121,7 +130,7 @@ function Base() {
                     <hr className="border-0 border-t border-gray-200 my-2"/>
                     <div className='flex flex-col gap-4'>
                         <div className="w-full mx-auto">
-                            <FormContext.Provider value={(exp) => dispatchExpense('add', { expense: exp })}>
+                            <FormContext.Provider value={{currentMonth, currentYear, addExpensefn: (exp) => dispatchExpense('add', { expense: exp })}}>
                                 <FormExpenses />
                             </FormContext.Provider>
                         </div>

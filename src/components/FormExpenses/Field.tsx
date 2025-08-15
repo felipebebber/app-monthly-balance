@@ -23,6 +23,23 @@ const Field = {
             </Field.Label>
         )
     },
+    Date: function(props: Input) {
+        const [dateValue, setDateValue] = useState(props.value);
+
+        function handleValueChange(e) {
+            setDateValue(e.currentTarget.value);
+        }
+
+        useEffect(() => {
+            setDateValue(props.value)
+        }, [props.value]);
+
+        return (
+            <Field.Label label={props.label}>
+                <input {...props} className={Field.styles('flex-1')} value={dateValue} onChange={handleValueChange}  />
+            </Field.Label>
+        )
+    },
     InputValor: function(props: Input) {
         const [amount, setAmount] = useState(props.newValue ? props.newValue.replace(/\D/g, '') : '');
 

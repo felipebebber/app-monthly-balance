@@ -3,11 +3,12 @@ import Field from "./Field";
 import FormContext from "../../context/FormContext";
 import monthNames from "../../data/months";
 import typeExpenses from "../../data/typeExpense";
+import STORAGE_KEYS from '../../data/storageKeys';
 
 type FormType = { type?: string, fn?: string | Function, values?: object, callback?: null | Function}
 
 function Form({ type = 'row', fn = 'add', values = {}, callback = null}: FormType) {
-  const addExpensefn = useContext(FormContext);
+  const { addExpensefn, currentMonth, currentYear } = useContext(FormContext);
 
   const [resetForm, setResetForm] = useState(false);
   const [valorError, setValorError] = useState(false);
@@ -33,6 +34,7 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}: FormTyp
       return false;
     }
 
+    const day = date.getDate().toString();
     const month = date.getMonth().toString();
     const year = date.getFullYear().toString();
     objExpense['month'] = month;
@@ -51,6 +53,8 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}: FormTyp
       addExpensefn(objExpense);
       setResetForm(true);
       e.currentTarget.reset();
+
+      localStorage.setItem(STORAGE_KEYS.DAY, day);
       
     } else if (typeof fn === 'function') {
       fn(objExpense);
@@ -60,10 +64,7 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}: FormTyp
   };
 
   const currentDate = (function() {
-    const now = new Date();
-    const day = ("0" + now.getDate()).slice(-2);
-    const month = ("0" + (now.getMonth() + 1)).slice(-2);
-    return now.getFullYear() + "-" + (month) + "-"+ (day);
+    return currentYear + "-" + ('0' + (parseInt(currentMonth) + 1)) + "-"+ '01';
   })();
 
   return (
@@ -86,7 +87,7 @@ function Form({ type = 'row', fn = 'add', values = {}, callback = null}: FormTyp
           {valorError && <ErrorMsg>Valor precisar ser maior que 0</ErrorMsg>}
         </div>
         <div className="flex-1 min-w-0 relative">
-          <Field.Input name="data" label="Data" required={true} type="date" defaultValue={values['data'] ? values['data'] : currentDate} />
+          <Field.Date name="data" label="Data" required={true} type="date" value={values['data'] ? values['data'] : currentDate} />
           {dataError && <ErrorMsg>Data inválida</ErrorMsg>}
         </div>
         <Field.Submit label={fn === 'add' ? 'Adicionar' : 'Editar'} />
