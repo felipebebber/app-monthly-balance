@@ -45,7 +45,7 @@ function DateControlWrapper({values: {expenses, currentMonth, currentYear, setCu
     <div className='flex items-center justify-center gap-3'>
       <div className='text-2xl border-t-0 text-gray-500 border flex border-blue-200 rounded-b'>
         <div className='capitalize border-r border-blue-200 px-2 py-1 min-w-[66px]'>
-              <select value={currentMonth} onChange={handleChangeMonth}>
+              <select className="cursor-pointer" value={currentMonth} onChange={handleChangeMonth}>
                 {selectMonthOptions && selectMonthOptions.map(function(item, i) {
                   const month = parseInt(item);
                   const monthParsed = month + 1;
@@ -57,7 +57,7 @@ function DateControlWrapper({values: {expenses, currentMonth, currentYear, setCu
               </select>
           </div>
         <div className='px-2 py-1 min-w-[92px]'>
-          <select value={currentYear} onChange={handleChangeYear}>
+          <select className="cursor-pointer" value={currentYear} onChange={handleChangeYear}>
             {selectYearOptions && selectYearOptions.map(function(year, i) {
               return (
                 <option key={`${i}-${year}`} value={year}>{year}</option>

@@ -140,7 +140,7 @@ function Base() {
                             </div>
                         </div>
                         <div className='text-right'>
-                            <button className='border-red-300 border px-2 py-1 rounded text-sm' onClick={() =>
+                            <button className='border-red-300 border px-2 py-1 rounded text-sm cursor-pointer hover:bg-red-300' onClick={() =>
                                 modal({
                                     type: 'confirm',
                                     text: <b>Deseja deletar todas despesas?</b>,

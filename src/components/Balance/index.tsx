@@ -8,6 +8,8 @@ function Balance({ list }) {
   const ExpenseSmallBig = calculateSmallBigExpenseFn(list);
   // const
   const totalItems = list.length;
+
+  console.log(ExpenseSmallBig);
   
   return (
     <>
@@ -26,26 +28,32 @@ function BalanceTotal({ total, totalItems, ExpenseSmallBig }) {
     <div className="flex justify-between bg-gray-200 text-black py-2 px-4 rounded-b-md text-sm font-medium">
       <span>Gasto Total</span>
       <span className="ml-auto relative text-right">
-        <span className="font-bold text-blue-600 mr-7">
+        <span className={`font-bold text-blue-600 ${totalItems !== 0 ? 'mr-7' : ''}`}>
           {total} ({totalItems === 1 ? totalItems + ' item' : totalItems + ' itens'})
         </span>
+        {totalItems !== 0 &&
         <details onClick={(e: any) => {
           e.preventDefault()
         }} className="ml-2 text-left" {...infoOpen ?{open: true}: {}}>
           <summary className="absolute top-[1px] right-1 list-none rounded-md bg-blue-500 text-white w-[17px] h-[17px] flex items-center justify-center" onClick={() => setInfoOpen(!infoOpen)}>{ infoOpen ? '-' : '+'}</summary>
           <table className="mt-1">
-            <tr>
-              <td className="px-1 py-0 uppercase text-xs text-gray-500 text-right">Maior gasto</td>
-              <td className="px-1 py-0 border border-r border-gray-400">{ExpenseSmallBig.big.tipo}</td>
-              <td className="px-1 py-0 border border-gray-400"><span className="text-red-500">{ExpenseSmallBig.big.total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</span></td>
-            </tr>
-            <tr>
-              <td className="px-1 py-0 uppercase text-xs text-gray-500 text-right">Menor gasto</td>
-              <td className="px-1 py-0 border border-gray-400">{ExpenseSmallBig.small.tipo}</td>
-              <td className="px-1 py-0 border border-gray-400"><span className="text-blue-500">{ExpenseSmallBig.small.total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</span></td>
-            </tr>
+            <tbody>
+              <tr>
+                <td className="px-1 py-0 uppercase text-xs text-gray-500 text-right">Maior gasto (acc)</td>
+                <td className="px-1 py-0 border border-r border-gray-400">{ExpenseSmallBig.big.tipo}</td>
+                <td className="px-1 py-0 border border-gray-400"><span className="text-red-500">{ExpenseSmallBig.big.total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</span></td>
+              </tr>
+              {(ExpenseSmallBig.small.tipo !== ExpenseSmallBig.big.tipo && ExpenseSmallBig.small.total !== 0 && totalItems > 1)&&
+                <tr>
+                  <td className="px-1 py-0 uppercase text-xs text-gray-500 text-right">Menor gasto (acc)</td>
+                  <td className="px-1 py-0 border border-gray-400">{ExpenseSmallBig.small.tipo}</td>
+                  <td className="px-1 py-0 border border-gray-400"><span className="text-blue-500">{ExpenseSmallBig.small.total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</span></td>
+                </tr>
+              }
+            </tbody>
           </table>
         </details>
+        }
       </span>
     </div>
   )

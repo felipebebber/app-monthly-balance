@@ -14,7 +14,7 @@ type Input = {
 
 const Field = {
     styles: function(otherClasses = '') {
-        return `px-2 py-1.5 block min-w-0 rounded-md bg-blue-50 ${otherClasses}`;
+        return `px-2 py-1.5 block min-w-0 rounded-md bg-blue-50 hover:bg-blue-100 ${otherClasses}`;
     },
     Input: function(props: Input) {
         return (
@@ -67,7 +67,7 @@ const Field = {
         )
     },
     Submit: function({ label }) {
-        return <button className={Field.styles('bg-blue-100')}>{label}</button>
+        return <button className={Field.styles('bg-blue-100 hover:bg-blue-300 cursor-pointer')}>{label}</button>
     },
     Label: function({ label = '', children }) {
         return (

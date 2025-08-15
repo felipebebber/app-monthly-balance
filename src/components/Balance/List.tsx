@@ -42,7 +42,7 @@ function Tbody({ list }) {
             const { descricao, tipo, valor, data, month, year } = item;
             const infoUpdateExpense = { month, year, id: i };
             return (
-                <tr key={i} className="border-b border-b-gray-200">
+                <tr key={i} className="border-b border-b-gray-200 hover:bg-blue-100">
                     <td className={`${classNameTd} first:pl-4 border-l-2 ${typeExpenses[slugify(tipo)].borderColor}`}>{tipo}</td>
                     <td className={`${classNameTd}`}>
                         <div className="overflow-ellipsis overflow-hidden whitespace-nowrap max-w-[100px]">

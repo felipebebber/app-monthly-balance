@@ -14,21 +14,26 @@ function calculateSmallBigExpenseFn(expenses) {
             }
         });
 
-        countRefObj.push({
-            tipo: tipo,
-            total: currentTotal
+        if (currentTotal !== 0) {
+            countRefObj.push({
+                tipo: tipo,
+                total: currentTotal
+            });
+        }
+    });
+
+    if (countRefObj.length > 0) {
+        const max = countRefObj.reduce(function(prev, current) {
+            return (prev && prev.total > current.total) ? prev : current
         });
-    });
-
-    const max = countRefObj.reduce(function(prev, current) {
-        return (prev && prev.total > current.total) ? prev : current
-    });
+        
+        const min = countRefObj.reduce(function(prev, current) {
+            return (prev && prev.total < current.total) ? prev : current
+        });
     
-    const min = countRefObj.reduce(function(prev, current) {
-        return (prev && prev.total < current.total) ? prev : current
-    });
+        return { small: min, big: max };
+    }
 
-    return { small: min, big: max };
 }
 
 export default calculateSmallBigExpenseFn;
