@@ -35,7 +35,7 @@ function BalanceTotal({ total, totalItems, ExpenseSmallBig }) {
         <details onClick={(e: any) => {
           e.preventDefault()
         }} className="ml-2 text-left" {...infoOpen ?{open: true}: {}}>
-          <summary className="absolute top-[1px] right-1 list-none rounded-md bg-blue-500 text-white w-[17px] h-[17px] flex items-center justify-center" onClick={() => setInfoOpen(!infoOpen)}>{ infoOpen ? '-' : '+'}</summary>
+          <summary className="absolute top-[1px] right-1 list-none rounded-md bg-blue-500 text-white w-[17px] h-[17px] flex items-center justify-center cursor-pointer" onClick={() => setInfoOpen(!infoOpen)}>{ infoOpen ? '-' : '+'}</summary>
           <table className="mt-1">
             <tbody>
               <tr>
