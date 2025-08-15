@@ -1,4 +1,4 @@
-import STORAGE_KEYS from './storageKeys';
+import STORAGE_KEYS from '../data/storageKeys';
 
 const setStorage = function(month, year, list) {
   if (Object.keys(list).length > 0) {

@@ -1,4 +1,4 @@
-function CalculateExpensesFn(expenses) {
+function calculateExpensesFn(expenses) {
     const initialValue = 0;
     const sumExpenses = expenses.reduce(
         (accumulator, currentValue) => {
@@ -10,4 +10,4 @@ function CalculateExpensesFn(expenses) {
     return sumExpenses;
 }
 
-export default CalculateExpensesFn;
+export default calculateExpensesFn;

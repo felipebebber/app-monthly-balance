@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useState, useMemo, useCallback } from 'react';
 
-import STORAGE_KEYS from '../../utility/storageKeys';
+import STORAGE_KEYS from '../../data/storageKeys';
 
 import Block from '../Block';
 import Modal from '../Modal';
