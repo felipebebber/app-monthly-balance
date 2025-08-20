@@ -1,12 +1,14 @@
-# React + Vite
+## App de controle de gastos.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+#### É possível cadastrar, editar, excluir e ter controle dos seus seus gastos em qualquer período datável. 
 
-Currently, two official plugins are available:
+#### No processo do cadastro, o usúario deve fornecer o tipo de gasto (comida, saúde, etc.), descrição (não obrigatório), valor e data.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#### App fornece um gráfico com quantidade e porcentagem relativa aos gastos do período selecionado e a informação do maior gasto e menor gasto do mês relativo ao tipo do gasto.
 
-## Expanding the ESLint configuration
+#### Projeto criado apenas para portfólio.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+npm install
+npm run dev
+```

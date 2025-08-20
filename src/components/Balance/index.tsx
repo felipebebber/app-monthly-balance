@@ -38,17 +38,9 @@ function BalanceTotal({ total, totalItems, ExpenseSmallBig }) {
           <summary className="absolute top-[1px] right-1 list-none rounded-md bg-blue-500 text-white w-[17px] h-[17px] flex items-center justify-center cursor-pointer" onClick={() => setInfoOpen(!infoOpen)}>{ infoOpen ? '-' : '+'}</summary>
           <table className="mt-1">
             <tbody>
-              <tr>
-                <td className="px-1 py-0 uppercase text-xs text-gray-500 text-right">Maior gasto (acc)</td>
-                <td className="px-1 py-0 border border-r border-gray-400">{ExpenseSmallBig.big.tipo}</td>
-                <td className="px-1 py-0 border border-gray-400"><span className="text-red-500">{ExpenseSmallBig.big.total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</span></td>
-              </tr>
-              {(ExpenseSmallBig.small.tipo !== ExpenseSmallBig.big.tipo && ExpenseSmallBig.small.total !== 0 && totalItems > 1)&&
-                <tr>
-                  <td className="px-1 py-0 uppercase text-xs text-gray-500 text-right">Menor gasto (acc)</td>
-                  <td className="px-1 py-0 border border-gray-400">{ExpenseSmallBig.small.tipo}</td>
-                  <td className="px-1 py-0 border border-gray-400"><span className="text-blue-500">{ExpenseSmallBig.small.total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</span></td>
-                </tr>
+              <ItemGasto title="Maior gasto (acc)" expense={ExpenseSmallBig.big} color="text-red-500"/>
+              {(ExpenseSmallBig.small.tipo !== ExpenseSmallBig.big.tipo && ExpenseSmallBig.small.total !== 0 && totalItems > 1) &&
+                <ItemGasto title="Menor gasto (acc)" expense={ExpenseSmallBig.small} color="text-blue-500"/>
               }
             </tbody>
           </table>
@@ -59,8 +51,15 @@ function BalanceTotal({ total, totalItems, ExpenseSmallBig }) {
   )
 };
 
-export default Balance;
-function calculateBiggestExpense(list: any) {
-  throw new Error("Function not implemented.");
-}
+function ItemGasto({ title, expense, color }) {
+  return (
+    <tr>
+      <td className="px-1 py-0 uppercase text-xs text-gray-500 text-right">{title}</td>
+      <td className="px-1 py-0 border border-r border-gray-400">{expense.tipo}</td>
+      <td className="px-1 py-0 border border-gray-400"><span className={color}>{expense.total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</span></td>
+    </tr>
+  )
+};
 
+
+export default Balance;
