@@ -6,10 +6,7 @@ import { useState } from "react";
 function Balance({ list }) {
   const total = calculateExpensesFn(list);
   const ExpenseSmallBig = calculateSmallBigExpenseFn(list);
-  // const
   const totalItems = list.length;
-
-  console.log(ExpenseSmallBig);
   
   return (
     <>
@@ -23,6 +20,9 @@ function Balance({ list }) {
 
 function BalanceTotal({ total, totalItems, ExpenseSmallBig }) {
   const [infoOpen, setInfoOpen] = useState(false);
+
+  const totalBig = ExpenseSmallBig ? ExpenseSmallBig.big : {};
+  const totalSmall = ExpenseSmallBig ? ExpenseSmallBig.small : {};
 
   return (
     <div className="flex justify-between bg-gray-200 text-black py-2 px-4 rounded-b-md text-sm font-medium">
@@ -38,9 +38,9 @@ function BalanceTotal({ total, totalItems, ExpenseSmallBig }) {
           <summary className="absolute top-[1px] right-1 list-none rounded-md bg-blue-500 text-white w-[17px] h-[17px] flex items-center justify-center cursor-pointer" onClick={() => setInfoOpen(!infoOpen)}>{ infoOpen ? '-' : '+'}</summary>
           <table className="mt-1">
             <tbody>
-              <ItemGasto title="Maior gasto (acc)" expense={ExpenseSmallBig.big} color="text-red-500"/>
-              {(ExpenseSmallBig.small.tipo !== ExpenseSmallBig.big.tipo && ExpenseSmallBig.small.total !== 0 && totalItems > 1) &&
-                <ItemGasto title="Menor gasto (acc)" expense={ExpenseSmallBig.small} color="text-blue-500"/>
+              <ItemGasto title="Maior gasto (acc)" expense={totalBig} color="text-red-500"/>
+              {(totalSmall.tipo !== totalBig.tipo && totalSmall.total !== 0 && totalItems > 1) &&
+                <ItemGasto title="Menor gasto (acc)" expense={totalSmall} color="text-blue-500"/>
               }
             </tbody>
           </table>
